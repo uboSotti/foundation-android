@@ -15,5 +15,5 @@ dependencies {
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.okhttp.core)
-    implementation(libs.okhttp.logging)
+    debugImplementation(libs.okhttp.logging)
 }
