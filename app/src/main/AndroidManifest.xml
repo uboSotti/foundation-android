@@ -14,11 +14,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FoundationAndroid"
         tools:targetApi="36">
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.foundation.android.initializer.TimberInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.FoundationAndroid">
+            android:theme="@style/Theme.FoundationAndroid"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
