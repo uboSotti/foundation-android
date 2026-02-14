@@ -1,5 +1,6 @@
 plugins {
     id("foundation.android.library")
+    id("foundation.kotlin.serialization")
     alias(libs.plugins.kotlin.parcelize)
 }
 

@@ -1,6 +1,7 @@
 plugins {
     id("foundation.android.library")
     id("foundation.android.hilt")
+    id("foundation.kotlin.serialization")
 }
 
 android {
@@ -11,8 +12,8 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
 
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlin.serialization)
+    implementation(libs.okhttp.core)
+    implementation(libs.okhttp.logging)
 }

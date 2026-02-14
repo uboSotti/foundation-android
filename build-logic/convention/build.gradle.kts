@@ -5,12 +5,13 @@ plugins {
 group = "com.foundation.buildlogic"
 
 dependencies {
-    implementation(libs.android.gradlePlugin)
-    implementation(libs.kotlin.gradlePlugin)
-    implementation(libs.ksp.gradlePlugin)
-    implementation(libs.compose.gradlePlugin)
-    implementation(libs.hilt.gradlePlugin)
-    implementation(libs.androidx.room.gradlePlugin)
+    implementation(libs.android.gradle.plugin)
+    implementation(libs.kotlin.gradle.plugin)
+    implementation(libs.kotlin.serialization.plugin)
+    implementation(libs.ksp.gradle.plugin)
+    implementation(libs.compose.gradle.plugin)
+    implementation(libs.hilt.gradle.plugin)
+    implementation(libs.room.gradle.plugin)
 }
 
 gradlePlugin {
@@ -38,6 +39,10 @@ gradlePlugin {
         register("androidFeature") {
             id = "foundation.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
+        }
+        register("kotlinSerialization") {
+            id = "foundation.kotlin.serialization"
+            implementationClass = "KotlinSerializationConventionPlugin"
         }
     }
 }

@@ -7,10 +7,16 @@ plugins {
 android {
     namespace = "com.foundation.android"
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.foundation.android"
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "BASE_URL", "\"https://api.example.com/\"")
     }
 
     packaging {
