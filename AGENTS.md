@@ -1,59 +1,115 @@
-# AGENT CONVENTIONS & GUIDELINES
+# AGENTS.md
 
-이 문서는 이 프로젝트에 참여하는 모든 AI 에이전트 및 개발자가 준수해야 할 규칙과 소양을 정의합니다.
+> **Notice**: This file is the **Official Protocol** for Autonomous AI Agents working on the `foundation-android` project.
+> You must operate via **CLI commands**, follow a **strict thinking process**, and ensure **build stability** via self-correction.
 
-## 1. Core Values (기본 소양)
+## 1. Project Context & Environment
 
-*   **Proactive Analysis (선제적 분석)**: 요청받은 작업만 수행하지 않고, 잠재적인 문제점이나 더 나은 설계 방향을 먼저 제안한다.
-*   **Context Awareness (맥락 인지)**: 현재 수정 중인 파일뿐만 아니라, 프로젝트 전체 구조와 의존성을 고려하여 코드를 작성한다.
-*   **Precision (정확성)**: 불확실한 가정에 의존하지 않고, 명확한 근거(공식 문서, 코드베이스 분석)를 바탕으로 답한다.
-*   **Minimalism (간결함)**: 불필요한 주석이나 장황한 설명은 지양하고, 핵심 변경 사항과 이유에 집중한다.
+* **Project Name**: foundation-android
+* **Architecture**: Modularized Clean Architecture (Multi-module)
+* **Build System**: Gradle Kotlin DSL + Version Catalog (`libs.versions.toml`)
+* **Environment**:
+* Root Directory: `./`
+* JDK: Version 17+
+* Network Access: Allowed for dependency resolution.
 
-## 2. Project Architecture Standards
 
-### Module Structure
-*   **Root**: `:app` (Application Entry Point)
-*   **Core Layer** (`:core:*`):
-    *   `:core:model`: 순수 도메인 모델 및 데이터 클래스.
-    *   `:core:common`: 공통 유틸리티, 확장 함수.
-    *   `:core:domain`: UseCase, Repository Interface.
-    *   `:core:data`: Repository Implementation, DataSource.
-    *   `:core:network`: API 호출 로직 (Retrofit/OkHttp).
-    *   `:core:database`: 로컬 데이터베이스 (Room).
-    *   `:core:ui`: 공통 UI 컴포넌트, 테마, 디자인 시스템.
-    *   `:core:testing`: 테스트 유틸리티 및 공통 Test Rule.
-*   **Feature Layer** (`:feature:*`):
-    *   각 기능별로 모듈을 분리하며, `:core:domain`, `:core:ui`, `:core:model` 등을 참조한다.
 
-### Technology Stack
-*   **Language**: Kotlin (Strict Mode)
-*   **UI**: Jetpack Compose (Material3)
-*   **DI**: Hilt
-*   **Async**: Coroutines & Flow
-*   **Network**: Retrofit2 & OkHttp3
-*   **Database**: Room
-*   **Build**: Gradle Kotlin DSL + Version Catalog (`libs.versions.toml`)
+## 2. Operational Protocol (Thinking Process)
 
-## 3. Coding Conventions
+Before generating code or executing commands, you **MUST** output your internal reasoning using these XML tags. This serves as your execution log.
 
-### General
-*   **KDoc**: 모든 public 함수와 클래스에는 KDoc을 작성한다.
-*   **Testing**:
-    *   Business Logic: JUnit4/5 + MockK + Truth
-    *   Coroutines: `runTest` + `StandardTestDispatcher`
-    *   UI: Compose Test Rule
-*   **String Resources**: 모든 UI 텍스트는 `strings.xml`에 정의하여 사용한다 (하드코딩 금지).
+1. **`<analysis>`**: Analyze the goal, current codebase state, and affected modules.
+2. **`<plan>`**: Define the files to modify and the logical order of operations.
+3. **`<verification>`**: Self-check against architectural rules (e.g., "Is business logic in ViewModel?", "Is the commit message correct?").
 
-### Git & Version Control
-*   **Commit Message**: `type: description` (예: `feat: Add user login screen`, `fix: Resolve memory leak in HomeFragment`)
+**Example Output:**
 
-## 4. Communication Style
+```xml
+<analysis>
+  Goal: Add 'Login' feature.
+  Current: Missing :feature:login module.
+  Impact: Create module, add to settings.gradle.kts, update libs.versions.toml.
+</analysis>
+<plan>
+  1. Define dependencies in libs.versions.toml.
+  2. Create :feature:login with AndroidFeatureConventionPlugin.
+  3. Implement LoginViewModel for logic and LoginScreen for UI.
+</plan>
+<verification>
+  Checked: :feature:login depends on :core:ui.
+  Checked: Login logic is encapsulated in ViewModel (UDF).
+</verification>
 
-*   **Language**: 한국어 (기술 용어는 영어 원문 사용).
-*   **Format**:
-    *   중요 키워드는 '작은따옴표'로 강조.
-    *   단계별 전략(Step-by-Step Strategy)을 먼저 제시하고 승인을 득한다.
-    *   코드 변경 시 전체 파일을 출력하지 않고, `write_file` 등을 통해 효율적으로 적용한다.
+```
 
----
-**Note**: 이 문서는 프로젝트가 발전함에 따라 지속적으로 업데이트되어야 한다.
+## 3. Execution & Validation Cycle (Autonomous Loop)
+
+Instead of waiting for user approval, follow this strict **Self-Validation Loop**:
+
+1. **Plan & Edit**: Modify files based on your `<plan>`.
+2. **Sync**: If build logic changed, run `./gradlew --refresh-dependencies` (or equivalent).
+3. **Build Verification**: **IMMEDIATELY** run `./gradlew assembleDebug` after significant changes.
+4. **Test Verification**: Run `./gradlew testDebugUnitTest` to ensure no regression.
+5. **Self-Correction**:
+* **If Build Fails**: Read the CLI error log, analyze the root cause, and apply a fix. **Do not stop** unless the error is unresolvable.
+* **If Build Passes**: Proceed to the next task or mark as complete.
+
+
+
+## 4. CLI Verification Commands
+
+Use these commands to verify your work:
+
+| Action | Command | Purpose |
+| --- | --- | --- |
+| **Verify Build** | `./gradlew assembleDebug` | Essential check after any code change. |
+| **Verify Logic** | `./gradlew testDebugUnitTest` | Check for logic regressions. |
+| **Lint Check** | `./gradlew lintDebug` | Check for code style violations. |
+| **Clean** | `./gradlew clean` | Use if you suspect cache issues. |
+
+## 5. Coding & Architecture Standards
+
+### Module Structure (Wildcard Pattern)
+
+* **`:app`**: Application Root (DI, Nav).
+* **`:feature:*`**: Independent features (Screens, ViewModels).
+* **`:core:*`**: Shared logic (Domain, Data, UI, Network, Database).
+
+### Critical Architecture Rules
+
+1. **Business Logic Placement**:
+* **ALL** business logic **MUST** be placed in the **ViewModel**.
+* Composables **MUST** be pure and only render the state provided by the ViewModel.
+* Do not write logic inside UI components (e.g., `onClick { logic() }` is forbidden; use `onClick { viewModel.process() }`).
+
+
+2. **Official Android Architecture**:
+* **UDF (Unidirectional Data Flow)**: Strictly follow `ViewModel`  `State`  `UI`  `Event`  `ViewModel`.
+* **Lifecycle Awareness**: Always use lifecycle-aware state collection methods like `collectAsStateWithLifecycle()` in Composables.
+* **Layered Architecture**: Respect the separation of concerns (UI Layer, Domain Layer, Data Layer).
+
+
+3. **Layering Principles**:
+* `:feature:*`  `:core:domain`, `:core:ui`
+* `:core:data`  `:core:domain`
+* **Forbidden**: `:feature:A`  `:feature:B` (Horizontal dependency).
+
+
+
+### Operational Standards
+
+1. **Git Conventions**:
+* Commit messages **MUST** follow **Conventional Commits 1.0.0**.
+* **Format**: `type(scope): description`
+* **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
+* **Example**: `feat(login): Implement input validation in ViewModel`
+
+
+2. **Dependency Management**:
+* **MUST** use `libs.versions.toml`. **NEVER** hardcode versions.
+* **ALWAYS** search/use the **latest stable version** for new libraries.
+
+
+3. **File Output**:
+* Use `diff` format or clear code blocks. Do not dump unchanged file content.
