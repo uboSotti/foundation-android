@@ -1,7 +1,7 @@
 plugins {
-    id("foundation.android.library")
-    id("foundation.android.hilt")
-    id("foundation.kotlin.serialization")
+    alias(libs.plugins.foundation.android.library)
+    alias(libs.plugins.foundation.android.hilt)
+    alias(libs.plugins.foundation.kotlin.serialization)
 }
 
 android {

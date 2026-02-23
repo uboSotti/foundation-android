@@ -1,7 +1,7 @@
 plugins {
-    id("foundation.android.application")
-    id("foundation.android.hilt")
-    id("foundation.android.compose")
+    alias(libs.plugins.foundation.android.application)
+    alias(libs.plugins.foundation.android.hilt)
+    alias(libs.plugins.foundation.android.compose)
 }
 
 android {
@@ -27,19 +27,20 @@ android {
 }
 
 dependencies {
-    // Feature Modules
+    // Feature modules
     implementation(project(":feature:example"))
 
-    // Core Modules
-    implementation(project(":core:ui"))
+    // Core modules
+    implementation(project(":core:common"))
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
-    implementation(project(":core:common"))
     implementation(project(":core:model"))
+    implementation(project(":core:ui"))
 
     // Compose & UI
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // Navigation
     implementation(libs.androidx.navigation3.runtime)

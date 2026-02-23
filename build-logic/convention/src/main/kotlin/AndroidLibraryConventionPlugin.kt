@@ -12,6 +12,11 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureAndroid(this)
+                
+                // 불필요한 BuildConfig 생성 방지
+                buildFeatures {
+                    buildConfig = false
+                }
             }
         }
     }
