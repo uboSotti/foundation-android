@@ -2,7 +2,7 @@ import com.android.build.api.dsl.CommonExtension
 import com.foundation.buildconfig.Android
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
@@ -22,9 +22,11 @@ internal fun Project.configureAndroid(
         }
     }
 
-    extensions.getByType<KotlinAndroidProjectExtension>().apply {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
+    configureKotlin()
+}
+
+private fun Project.configureKotlin() = configure<KotlinAndroidProjectExtension> {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }

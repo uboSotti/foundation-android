@@ -1,6 +1,6 @@
 plugins {
-    id("foundation.android.library")
-    id("foundation.android.hilt")
+    alias(libs.plugins.foundation.android.library)
+    alias(libs.plugins.foundation.android.hilt)
 }
 
 android {
@@ -9,8 +9,10 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
-    implementation(project(":core:model"))
-    implementation(project(":core:domain"))
-    implementation(project(":core:network"))
     implementation(project(":core:database"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:model"))
+    implementation(project(":core:network"))
+
+    implementation(libs.androidx.datastore.preferences)
 }

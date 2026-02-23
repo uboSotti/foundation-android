@@ -2,7 +2,7 @@
 # Build Tools & Core
 androidGradlePlugin = "9.0.1"
 kotlin = "2.3.10"
-ksp = "2.3.5"
+ksp = "2.3.6"
 
 # AndroidX
 androidxCore = "1.17.0"
@@ -27,6 +27,7 @@ kotlinxSerializationJson = "1.10.0"
 
 # Storage
 room = "2.8.4"
+datastore = "1.2.0"
 
 # Async & Logging
 kotlinxCoroutines = "1.10.2"
@@ -44,6 +45,7 @@ turbine = "1.2.1"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidxStartup" }
 
 # Compose
@@ -79,6 +81,9 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
+# DataStore
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
 # Coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
@@ -110,3 +115,13 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "room" }
+
+# Convention Plugins (build-logic)
+foundation-android-application = { id = "foundation.android.application" }
+foundation-android-library = { id = "foundation.android.library" }
+foundation-android-compose = { id = "foundation.android.compose" }
+foundation-android-hilt = { id = "foundation.android.hilt" }
+foundation-android-room = { id = "foundation.android.room" }
+foundation-android-feature = { id = "foundation.android.feature" }
+foundation-kotlin-serialization = { id = "foundation.kotlin.serialization" }

@@ -285,7 +285,7 @@ Implement your `NavKey`, `UiState`, `ViewModel`, `Screen`, and navigation entry 
 **6. Sync and build**
 
 ```bash
-./gradlew assembleDebug
+./gradlew :app:assembleDebug
 ```
 
 ### Adding a New Core Module

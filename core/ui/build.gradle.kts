@@ -1,6 +1,6 @@
 plugins {
-    id("foundation.android.library")
-    id("foundation.android.compose")
+    alias(libs.plugins.foundation.android.library)
+    alias(libs.plugins.foundation.android.compose)
 }
 
 android {
@@ -8,6 +8,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
     implementation(project(":core:model"))
+    implementation(project(":core:common"))
 }
