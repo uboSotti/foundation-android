@@ -8,6 +8,7 @@ import com.foundation.core.domain.usecase.GetLastLaunchedAtUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -53,11 +54,16 @@ class MainActivityViewModel @Inject constructor(
 
     /**
      * 앱이 진입할 때마다 DataStore에 마지막 실행 시각을 갱신한다.
+     * 
+     * 첫 실행 여부(isFirstLaunch) 판단을 보장하기 위해, 
+     * DataStore의 초기 데이터를 온전히 읽어들인 이후에만 쓰기를 수행한다.
      *
      * @param launchedAt 갱신할 시각 (Unix epoch millis).
      */
     fun updateLastLaunchedAt(launchedAt: Long) {
         viewModelScope.launch {
+            // Loading 상태가 아닐 때(즉, 첫 판별이 끝났을 때)까지 대기한 후 기록 실행
+            uiState.first { it !is MainActivityUiState.Loading }
             settingsRepository.updateLastLaunchedAt(launchedAt)
         }
     }
