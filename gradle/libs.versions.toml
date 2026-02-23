@@ -27,6 +27,7 @@ kotlinxSerializationJson = "1.10.0"
 
 # Storage
 room = "2.8.4"
+datastore = "1.2.0"
 
 # Async & Logging
 kotlinxCoroutines = "1.10.2"
@@ -78,6 +79,9 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+# DataStore
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 # Coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }

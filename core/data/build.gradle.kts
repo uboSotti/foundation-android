@@ -8,9 +8,11 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:model"))
     implementation(project(":core:domain"))
     implementation(project(":core:network"))
     implementation(project(":core:database"))
+    implementation(project(":core:model"))
+    implementation(project(":core:common"))
+
+    implementation(libs.androidx.datastore.preferences)
 }

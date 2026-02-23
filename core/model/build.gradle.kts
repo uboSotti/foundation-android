@@ -9,5 +9,4 @@ android {
 }
 
 dependencies {
-    // Pure Kotlin models mainly
 }

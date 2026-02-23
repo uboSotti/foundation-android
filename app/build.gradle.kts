@@ -27,16 +27,24 @@ android {
 }
 
 dependencies {
+    // Feature Modules
     implementation(project(":feature:example"))
 
+    // Core Modules
     implementation(project(":core:ui"))
     implementation(project(":core:data"))
+    implementation(project(":core:domain"))
     implementation(project(":core:common"))
     implementation(project(":core:model"))
 
+    // Compose & UI
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.startup.runtime)
+
+    // Navigation
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+
+    // Misc
+    implementation(libs.androidx.startup.runtime)
 }
