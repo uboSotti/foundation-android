@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
 
             FoundationTheme {
                 when (val state = uiState) {
-                    is MainActivityUiState.Configure -> LoadingContent()
+                    is MainActivityUiState.Configure -> LoadingContent(modifier = Modifier.fillMaxSize())
 
                     is MainActivityUiState.Ready -> {
                         val appState = rememberFoundationAppState(
