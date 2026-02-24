@@ -18,7 +18,7 @@ import javax.inject.Inject
  * [MainActivity]의 앱 수준 상태를 관리하는 ViewModel.
  *
  * DataStore의 초기 설정을 로딩하여 [MainActivityUiState]로 변환하고,
- * [com.foundation.android.ui.FoundationApp]에 앱 첫 실행 여부 등의 상태를 제공한다.
+ * 앱 첫 실행 여부 등의 상태를 제공한다.
  */
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
@@ -29,41 +29,38 @@ class MainActivityViewModel @Inject constructor(
     /**
      * 앱 수준 UI 상태를 노출하는 StateFlow.
      *
-     * DataStore 첫 emit 전까지 [MainActivityUiState.Loading]을 유지하여
-     * 스플래시 화면 또는 로딩 UI를 표시할 수 있도록 한다.
+     * DataStore 첫 emit 전까지 [MainActivityUiState.Configure]를 유지하여
+     * 스플래시 화면이 표시되도록 한다.
      */
     val uiState: StateFlow<MainActivityUiState> = getLastLaunchedAt()
         .map { result ->
             when (result) {
-                is Result.Loading -> MainActivityUiState.Loading
+                is Result.Loading -> MainActivityUiState.Configure
                 // lastLaunchedAt이 null이면 DataStore에 기록이 없는 최초 실행
-                is Result.Success -> MainActivityUiState.Success(
+                is Result.Success -> MainActivityUiState.Ready(
                     isFirstLaunch = result.data == null,
                 )
-                // 읽기 오류 시에도 앱이 중단되지 않도록 기본값으로 진입
-                is Result.Error -> MainActivityUiState.Success(
-                    isFirstLaunch = false,
-                )
+                is Result.Error -> MainActivityUiState.Error(result.exception)
             }
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = MainActivityUiState.Loading,
+            initialValue = MainActivityUiState.Configure,
         )
 
     /**
      * 앱이 진입할 때마다 DataStore에 마지막 실행 시각을 갱신한다.
-     * 
-     * 첫 실행 여부(isFirstLaunch) 판단을 보장하기 위해, 
-     * DataStore의 초기 데이터를 온전히 읽어들인 이후에만 쓰기를 수행한다.
+     *
+     * 첫 실행 여부(isFirstLaunch) 판단을 보장하기 위해,
+     * DataStore의 초기 데이터가 [MainActivityUiState.Ready]에 도달한 이후에만
+     * 쓰기를 수행한다. [MainActivityUiState.Error] 발생 시에는 갱신하지 않는다.
      *
      * @param launchedAt 갱신할 시각 (Unix epoch millis).
      */
     fun updateLastLaunchedAt(launchedAt: Long) {
         viewModelScope.launch {
-            // Loading 상태가 아닐 때(즉, 첫 판별이 끝났을 때)까지 대기한 후 기록 실행
-            uiState.first { it !is MainActivityUiState.Loading }
+            uiState.first { it is MainActivityUiState.Ready }
             settingsRepository.updateLastLaunchedAt(launchedAt)
         }
     }

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.foundation.android.application)
-    alias(libs.plugins.foundation.android.hilt)
     alias(libs.plugins.foundation.android.compose)
+    alias(libs.plugins.foundation.android.hilt)
 }
 
 android {
@@ -36,6 +36,9 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
+
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
 
     // Compose & UI
     implementation(libs.androidx.activity.compose)
