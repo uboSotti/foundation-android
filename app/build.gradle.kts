@@ -37,6 +37,9 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
 
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
+
     // Compose & UI
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
