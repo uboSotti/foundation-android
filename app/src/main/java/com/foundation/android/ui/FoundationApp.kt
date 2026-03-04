@@ -1,10 +1,13 @@
 package com.foundation.android.ui
 
+import android.content.Intent
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.foundation.feature.example.ExampleNavKey
@@ -49,13 +52,19 @@ private fun FoundationDisplay(
     appState: FoundationAppState,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     NavDisplay(
         backStack = appState.backStack,
         modifier = modifier,
         onBack = { appState.onBack() },
         entryProvider = { key ->
             when (key) {
-                is ExampleNavKey -> exampleEntry(key)
+                is ExampleNavKey -> exampleEntry(
+                    key = key,
+                    onOpenUrl = { url ->
+                        context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+                    },
+                )
                 else -> NavEntry(Unit) { }
             }
         },

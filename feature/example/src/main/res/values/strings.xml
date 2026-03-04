@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="example_owner">Owner: %s</string>
+    <string name="example_last_updated">최근 업데이트: %s</string>
+    <string name="example_stars">Stars: %d</string>
+    <string name="example_forks">Forks: %d</string>
+    <string name="example_language">Language: %s</string>
+    <string name="example_open_github_repo">Github repo열기</string>
+</resources>
