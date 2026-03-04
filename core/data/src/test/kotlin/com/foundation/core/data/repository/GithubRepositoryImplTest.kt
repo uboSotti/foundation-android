@@ -28,32 +28,28 @@ class GithubRepositoryImplTest {
     )
 
     @Test
-    fun `getRepositoryInfo는 매핑된 도메인 모델을 방출한다`() = runTest {
+    fun `getRepositoryInfo는 매핑된 도메인 모델을 반환한다`() = runTest {
         val apiService = mockk<GithubApiService>()
-        coEvery { apiService.getRepositoryInfo() } returns testResponse
+        coEvery { apiService.getRepositoryInfo(any(), any()) } returns testResponse
 
         val repository = GithubRepositoryImpl(apiService)
 
-        repository.getRepositoryInfo().test {
-            val repo = awaitItem()
-            assertEquals("uboSotti/foundation-android", repo.fullName)
-            assertEquals("https://github.com/uboSotti/foundation-android", repo.htmlUrl)
-            assertEquals(10, repo.stargazersCount)
-            assertEquals(2, repo.forksCount)
-            assertEquals("Kotlin", repo.language)
-            awaitComplete()
-        }
+        val repo = repository.getRepositoryInfo()
+        
+        assertEquals("uboSotti/foundation-android", repo.fullName)
+        assertEquals("https://github.com/uboSotti/foundation-android", repo.htmlUrl)
+        assertEquals(10, repo.stargazersCount)
+        assertEquals(2, repo.forksCount)
+        assertEquals("Kotlin", repo.language)
     }
 
-    @Test
+    @Test(expected = RuntimeException::class)
     fun `API 호출 실패 시 예외가 전파된다`() = runTest {
         val apiService = mockk<GithubApiService>()
-        coEvery { apiService.getRepositoryInfo() } throws RuntimeException("API error")
+        coEvery { apiService.getRepositoryInfo(any(), any()) } throws RuntimeException("API error")
 
         val repository = GithubRepositoryImpl(apiService)
 
-        repository.getRepositoryInfo().test {
-            awaitError()
-        }
+        repository.getRepositoryInfo()
     }
 }

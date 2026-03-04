@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -37,6 +36,7 @@ fun ExampleScreen(
     ExampleContent(
         uiState = uiState,
         onOpenUrl = onOpenUrl,
+        onRetry = viewModel::refresh,
         modifier = modifier,
     )
 }
@@ -52,6 +52,7 @@ fun ExampleScreen(
 internal fun ExampleContent(
     uiState: ExampleUiState,
     onOpenUrl: (String) -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -65,7 +66,8 @@ internal fun ExampleContent(
         )
 
         is ExampleUiState.Error -> ErrorContent(
-            message = uiState.message,
+            message = uiState.message ?: stringResource(R.string.example_unknown_error),
+            onRetry = onRetry,
             modifier = modifier,
         )
     }
@@ -87,15 +89,15 @@ private fun ExampleSuccessContent(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "여기에 새로운 앱을 시작하세요",
+            text = stringResource(R.string.example_title),
             style = MaterialTheme.typography.headlineSmall,
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = if (lastLaunchedAt != null) {
-                "마지막 실행: $lastLaunchedAt"
+                stringResource(R.string.example_last_launched_at, lastLaunchedAt)
             } else {
-                "마지막 실행 기록 없음"
+                stringResource(R.string.example_last_launched_none)
             },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -116,18 +118,18 @@ private fun GithubRepoCard(
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            // 레포 헤더
             Text(
                 text = githubRepo.fullName,
                 style = MaterialTheme.typography.titleMedium,
             )
-
             val description = githubRepo.description
             if (description != null) {
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
@@ -135,46 +137,39 @@ private fun GithubRepoCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
+            // 소유자 · 통계
             Text(
                 text = stringResource(R.string.example_owner, githubRepo.owner.login),
                 style = MaterialTheme.typography.bodyMedium,
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = stringResource(R.string.example_last_updated, githubRepo.updatedAt),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
                     text = stringResource(R.string.example_stars, githubRepo.stargazersCount),
                     style = MaterialTheme.typography.bodySmall,
                 )
-                Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = stringResource(R.string.example_forks, githubRepo.forksCount),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
-
             val language = githubRepo.language
             if (language != null) {
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = stringResource(R.string.example_language, language),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
+            // 외부 링크 버튼
             Button(
                 onClick = { onOpenUrl(githubRepo.htmlUrl) },
                 modifier = Modifier.fillMaxWidth(),

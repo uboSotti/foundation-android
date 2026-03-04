@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
  */
 interface GithubRepository {
 
-    /** 레포지토리 상세 정보를 조회하여 [Flow]로 반환한다. */
-    fun getRepositoryInfo(): Flow<GithubRepo>
+    /** 레포지토리 상세 정보를 조회한다. */
+    suspend fun getRepositoryInfo(
+        owner: String = "uboSotti",
+        repo: String = "foundation-android"
+    ): GithubRepo
 }

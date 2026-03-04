@@ -1,5 +1,6 @@
 package com.foundation.android
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.foundation.android.ui.FoundationApp
@@ -48,7 +50,12 @@ class MainActivity : ComponentActivity() {
                         val appState = rememberFoundationAppState(
                             isFirstLaunch = state.isFirstLaunch,
                         )
-                        FoundationApp(appState = appState)
+                        FoundationApp(
+                            appState = appState,
+                            onOpenUrl = { url ->
+                                startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+                            },
+                        )
                     }
 
                     is MainActivityUiState.Error -> ErrorContent(

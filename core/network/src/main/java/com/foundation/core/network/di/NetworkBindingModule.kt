@@ -1,5 +1,8 @@
 package com.foundation.core.network.di
 
+import com.foundation.core.network.host.GithubHost
+import com.foundation.core.network.host.Host
+import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -12,4 +15,7 @@ interface NetworkBindingModule {
 
     @Multibinds
     fun bindInterceptors(): Set<Interceptor>
+
+    @Binds
+    fun bindHost(githubHost: GithubHost): Host
 }

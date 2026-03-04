@@ -1,7 +1,7 @@
 package com.foundation.core.network.di
 
 import com.foundation.core.network.api.GithubApiService
-import com.foundation.core.network.host.GithubHost
+import com.foundation.core.network.host.Host
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,12 +21,12 @@ object ApiServiceModule {
     @Provides
     @Singleton
     fun provideGithubApiService(
-        githubHost: GithubHost,
+        host: Host,
         okHttpClient: OkHttpClient,
         json: Json,
     ): GithubApiService {
         return Retrofit.Builder()
-            .baseUrl(githubHost.url)
+            .baseUrl(host.url)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()

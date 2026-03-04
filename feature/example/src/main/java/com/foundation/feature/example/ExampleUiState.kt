@@ -27,9 +27,9 @@ sealed interface ExampleUiState {
     /**
      * 데이터 로드 실패 상태.
      *
-     * @property message 사용자에게 표시할 에러 메시지.
+     * @property message 예외에서 추출한 에러 메시지. null이면 UI에서 기본 메시지를 표시한다.
      */
     data class Error(
-        val message: String,
+        val message: String? = null,
     ) : ExampleUiState
 }

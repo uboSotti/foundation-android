@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="example_title">여기에 새로운 앱을 시작하세요</string>
+    <string name="example_last_launched_at">마지막 실행: %s</string>
+    <string name="example_last_launched_none">마지막 실행 기록 없음</string>
+    <string name="example_unknown_error">알 수 없는 오류가 발생했습니다.</string>
     <string name="example_owner">Owner: %s</string>
     <string name="example_last_updated">최근 업데이트: %s</string>
     <string name="example_stars">Stars: %d</string>

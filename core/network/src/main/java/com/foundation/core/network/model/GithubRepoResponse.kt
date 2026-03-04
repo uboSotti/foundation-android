@@ -25,8 +25,8 @@ data class GithubRepoResponse(
     @SerialName("description") val description: String? = null,
     @SerialName("html_url") val htmlUrl: String,
     @SerialName("updated_at") val updatedAt: String,
-    @SerialName("stargazers_count") val stargazersCount: Int,
-    @SerialName("forks_count") val forksCount: Int,
+    @SerialName("stargazers_count") val stargazersCount: Int = 0,
+    @SerialName("forks_count") val forksCount: Int = 0,
     @SerialName("language") val language: String? = null,
     @SerialName("owner") val owner: GithubOwnerResponse,
 )

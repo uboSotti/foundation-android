@@ -4,8 +4,7 @@ import com.foundation.core.domain.repository.GithubRepository
 import com.foundation.core.model.GithubRepo
 import com.foundation.core.network.api.GithubApiService
 import com.foundation.core.network.model.toDomainModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,8 +19,8 @@ class GithubRepositoryImpl @Inject constructor(
     private val githubApiService: GithubApiService,
 ) : GithubRepository {
 
-    override fun getRepositoryInfo(): Flow<GithubRepo> = flow {
-        val response = githubApiService.getRepositoryInfo()
-        emit(response.toDomainModel())
+    override suspend fun getRepositoryInfo(owner: String, repo: String): GithubRepo {
+        val response = githubApiService.getRepositoryInfo(owner = owner, repo = repo)
+        return response.toDomainModel()
     }
 }

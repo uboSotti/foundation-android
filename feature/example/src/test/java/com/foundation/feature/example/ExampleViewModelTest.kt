@@ -7,6 +7,7 @@ import com.foundation.core.domain.usecase.GetLastLaunchedAtUseCase
 import com.foundation.core.model.GithubOwner
 import com.foundation.core.model.GithubRepo
 import com.foundation.core.testing.MainDispatcherRule
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -39,11 +40,11 @@ class ExampleViewModelTest {
     private fun createViewModel(
         lastLaunchedResult: Result<Long?> = Result.Success(null),
         repoResult: Result<GithubRepo> = Result.Success(testRepo),
+        getLastLaunchedAt: GetLastLaunchedAtUseCase = mockk(),
+        getGithubRepo: GetGithubRepoUseCase = mockk(),
     ): ExampleViewModel {
-        val getLastLaunchedAt = mockk<GetLastLaunchedAtUseCase>()
-        val getGithubRepo = mockk<GetGithubRepoUseCase>()
         every { getLastLaunchedAt() } returns flowOf(lastLaunchedResult)
-        every { getGithubRepo() } returns flowOf(repoResult)
+        coEvery { getGithubRepo() } returns repoResult
         return ExampleViewModel(getLastLaunchedAt, getGithubRepo)
     }
 
@@ -52,7 +53,7 @@ class ExampleViewModelTest {
         val getLastLaunchedAt = mockk<GetLastLaunchedAtUseCase>()
         val getGithubRepo = mockk<GetGithubRepoUseCase>()
         every { getLastLaunchedAt() } returns flowOf(Result.Loading)
-        every { getGithubRepo() } returns flowOf(Result.Loading)
+        coEvery { getGithubRepo() } returns Result.Loading
 
         val viewModel = ExampleViewModel(getLastLaunchedAt, getGithubRepo)
 
