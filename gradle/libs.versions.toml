@@ -12,7 +12,7 @@ androidxLifecycle = "2.10.0"
 androidxStartup = "1.2.0"
 
 # Compose
-composeBom = "2026.02.00"
+composeBom = "2026.02.01"
 
 # Navigation
 navigation3 = "1.0.1"
