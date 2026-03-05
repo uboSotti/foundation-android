@@ -8,9 +8,13 @@ import com.foundation.core.network.model.GithubRepoResponse
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.SerializationException
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 
 class GithubRepositoryImplTest {
@@ -58,6 +62,42 @@ class GithubRepositoryImplTest {
             throw AssertionError("Expected AppException")
         } catch (e: AppException) {
             assertTrue(e.error is AppError.Network.Connection)
+        }
+    }
+
+    @Test
+    fun `HttpException 발생 시 Network Http 에러로 매핑된다`() = runTest {
+        val apiService = mockk<GithubApiService>()
+        coEvery {
+            apiService.getRepositoryInfo(any(), any())
+        } throws HttpException(Response.error<Any>(404, "".toResponseBody()))
+
+        val repository = GithubRepositoryImpl(apiService)
+
+        try {
+            repository.getRepositoryInfo("uboSotti", "foundation-android")
+            throw AssertionError("Expected AppException")
+        } catch (e: AppException) {
+            val error = e.error
+            assertTrue(error is AppError.Network.Http)
+            assertEquals(404, (error as AppError.Network.Http).code)
+        }
+    }
+
+    @Test
+    fun `SerializationException 발생 시 Network Serialization 에러로 매핑된다`() = runTest {
+        val apiService = mockk<GithubApiService>()
+        coEvery {
+            apiService.getRepositoryInfo(any(), any())
+        } throws SerializationException("parse error")
+
+        val repository = GithubRepositoryImpl(apiService)
+
+        try {
+            repository.getRepositoryInfo("uboSotti", "foundation-android")
+            throw AssertionError("Expected AppException")
+        } catch (e: AppException) {
+            assertTrue(e.error is AppError.Network.Serialization)
         }
     }
 

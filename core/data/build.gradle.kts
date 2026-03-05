@@ -20,4 +20,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.retrofit.core)
+    testImplementation(libs.okhttp.core)
+    testImplementation(libs.kotlinx.serialization.json)
 }
