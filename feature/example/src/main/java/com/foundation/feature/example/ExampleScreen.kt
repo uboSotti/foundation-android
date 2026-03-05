@@ -197,7 +197,7 @@ private fun GithubRepoCard(
             // ── 통계 행 ──
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
             ) {
                 StatItem(
                     label = stringResource(R.string.example_stat_stars),
