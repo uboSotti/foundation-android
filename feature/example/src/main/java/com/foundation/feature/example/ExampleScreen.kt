@@ -8,10 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,9 +23,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.foundation.core.common.error.AppError
 import com.foundation.core.common.result.Result
 import com.foundation.core.model.GithubRepo
@@ -140,65 +147,114 @@ private fun GithubRepoCard(
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            // 레포 헤더
-            Text(
-                text = githubRepo.fullName,
-                style = MaterialTheme.typography.titleMedium,
-            )
+    ElevatedCard(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            // ── Owner 헤더: 아바타 + 이름 ──
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(
+                    model = githubRepo.owner.avatarUrl,
+                    contentDescription = stringResource(
+                        R.string.example_owner_avatar_description,
+                        githubRepo.owner.login,
+                    ),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape),
+                )
+                Spacer(modifier = Modifier.width(14.dp))
+                Column {
+                    Text(
+                        text = githubRepo.fullName,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = stringResource(R.string.example_owner_handle, githubRepo.owner.login),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            // ── 설명 ──
             val description = githubRepo.description
             if (description != null) {
+                Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Spacer(modifier = Modifier.height(14.dp))
 
-            // 소유자 · 통계
-            Text(
-                text = stringResource(R.string.example_owner, githubRepo.owner.login),
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            // ── 통계 행 ──
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                StatItem(
+                    label = stringResource(R.string.example_stat_stars),
+                    value = githubRepo.stargazersCount.toString(),
+                )
+                StatItem(
+                    label = stringResource(R.string.example_stat_forks),
+                    value = githubRepo.forksCount.toString(),
+                )
+                val language = githubRepo.language
+                if (language != null) {
+                    StatItem(
+                        label = stringResource(R.string.example_stat_language),
+                        value = language,
+                    )
+                }
+            }
+
+            // ── 업데이트 일시 ──
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = stringResource(R.string.example_last_updated, githubRepo.updatedAt),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.outline,
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(
-                    text = stringResource(R.string.example_stars, githubRepo.stargazersCount),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                Text(
-                    text = stringResource(R.string.example_forks, githubRepo.forksCount),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            val language = githubRepo.language
-            if (language != null) {
-                Text(
-                    text = stringResource(R.string.example_language, language),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
-            // 외부 링크 버튼
-            Button(
+            // ── 외부 링크 버튼 ──
+            FilledTonalButton(
                 onClick = { onOpenUrl(githubRepo.htmlUrl) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text = stringResource(R.string.example_open_github_repo))
             }
         }
+    }
+}
+
+/** 통계 항목 하나를 렌더링하는 컴포넌트. */
+@Composable
+private fun StatItem(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
