@@ -1,5 +1,9 @@
 package com.foundation.android.ui
 
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -21,12 +25,17 @@ fun FoundationApp(
         entryBuilderFactories.map { factory -> factory.create(onOpenUrl) }
     }
 
-    NavDisplay<NavKey>(
-        backStack = appState.backStack,
-        onBack = appState::onBack,
-        entryProvider = entryProvider {
-            entryBuilders.forEach { builder -> this.builder() }
-        },
-        modifier = Modifier,
-    )
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        NavDisplay<NavKey>(
+            backStack = appState.backStack,
+            onBack = appState::onBack,
+            entryProvider = entryProvider {
+                entryBuilders.forEach { builder -> this.builder() }
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
+        )
+    }
 }
