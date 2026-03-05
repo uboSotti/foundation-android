@@ -5,10 +5,19 @@ import org.gradle.kotlin.dsl.dependencies
 internal fun Project.configureCompose(
     commonExtension: CommonExtension,
 ) {
+    configureComposeBase(commonExtension)
+    configureComposeUi()
+}
+
+internal fun Project.configureComposeBase(
+    commonExtension: CommonExtension,
+) {
     commonExtension.buildFeatures.apply {
         compose = true
     }
+}
 
+internal fun Project.configureComposeUi() {
     val libs = catalog()
 
     dependencies {

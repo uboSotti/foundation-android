@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.foundation.android.library)
-    alias(libs.plugins.foundation.android.compose)
+    alias(libs.plugins.foundation.android.compose.ui)
 }
 
 android {

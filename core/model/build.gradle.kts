@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.foundation.android.library)
-    alias(libs.plugins.foundation.kotlin.serialization)
+    alias(libs.plugins.foundation.kotlin.serialization.plugin)
     alias(libs.plugins.kotlin.parcelize)
 }
 

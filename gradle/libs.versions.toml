@@ -43,6 +43,7 @@ androidxJunit = "1.3.0"
 androidxEspresso = "3.7.0"
 mockk = "1.14.9"
 turbine = "1.2.1"
+javaxInject = "1"
 
 [libraries]
 # AndroidX
@@ -94,6 +95,7 @@ coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref 
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 
 # Coroutines
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 
@@ -106,6 +108,7 @@ androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref
 androidx-test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 
 # Build Logic Plugins (Convention Plugins)
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -129,8 +132,14 @@ room = { id = "androidx.room", version.ref = "room" }
 # Convention Plugins (build-logic)
 foundation-android-application = { id = "foundation.android.application" }
 foundation-android-library = { id = "foundation.android.library" }
-foundation-android-compose = { id = "foundation.android.compose" }
+foundation-android-compose-base = { id = "foundation.android.compose.base" }
+foundation-android-compose-ui = { id = "foundation.android.compose.ui" }
 foundation-android-hilt = { id = "foundation.android.hilt" }
 foundation-android-room = { id = "foundation.android.room" }
-foundation-android-feature = { id = "foundation.android.feature" }
-foundation-kotlin-serialization = { id = "foundation.kotlin.serialization" }
+foundation-android-feature-base = { id = "foundation.android.feature.base" }
+foundation-android-feature-domain = { id = "foundation.android.feature.domain" }
+foundation-android-feature-ui = { id = "foundation.android.feature.ui" }
+foundation-android-feature-navigation3 = { id = "foundation.android.feature.navigation3" }
+foundation-android-feature-lifecycle = { id = "foundation.android.feature.lifecycle" }
+foundation-kotlin-serialization-plugin = { id = "foundation.kotlin.serialization.plugin" }
+foundation-kotlin-serialization-json = { id = "foundation.kotlin.serialization.json" }

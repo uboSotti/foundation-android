@@ -16,6 +16,7 @@ Official protocol for AI/code agents in `foundation-android`.
 2. Edit with clear module/layer boundaries.
 3. If build scripts or dependencies changed: run `./gradlew --refresh-dependencies`.
 4. Always run:
+   - `./gradlew verifyArchitectureConventions`
    - `./gradlew assembleDebug`
    - `./gradlew testDebugUnitTest`
 5. If failure occurs, self-correct until green.
@@ -55,6 +56,10 @@ Official protocol for AI/code agents in `foundation-android`.
 - No hardcoded library versions in module build scripts.
 - Use `libs.versions.toml` and convention plugins.
 - Prefer adding shared module constraints in `build-logic` when rule should be global.
+- Apply split convention plugins by intent:
+  - Compose: `foundation.android.compose.base` / `foundation.android.compose.ui`
+  - Feature: `foundation.android.feature.base/domain/ui/navigation3/lifecycle`
+  - Serialization: `foundation.kotlin.serialization.plugin` / `foundation.kotlin.serialization.json`
 
 ## 6) Coding and Change Policy
 - Keep changes minimal but complete.

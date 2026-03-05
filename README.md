@@ -77,6 +77,7 @@ This project follows Navigation 3 modularization guidance.
 
 ## Build & Verify
 ```bash
+./gradlew verifyArchitectureConventions
 ./gradlew assembleDebug
 ./gradlew testDebugUnitTest
 ```
@@ -88,6 +89,10 @@ If build scripts/dependencies change:
 ## Conventions
 - Versions are managed only in `gradle/libs.versions.toml`.
 - Use convention plugins from `build-logic/convention`.
+- Convention plugins are split by purpose:
+  - `foundation.android.compose.base` / `foundation.android.compose.ui`
+  - `foundation.android.feature.base/domain/ui/navigation3/lifecycle`
+  - `foundation.kotlin.serialization.plugin` / `foundation.kotlin.serialization.json`
 - Prefer typed errors (`AppError`) and `Result` pipeline.
 - Use `collectAsStateWithLifecycle()` for all UI state collection.
 

@@ -41,8 +41,16 @@ gradlePlugin {
             implementationClass = "AndroidLibraryConventionPlugin"
         }
         register("androidCompose") {
-            id = libs.plugins.foundation.android.compose.get().pluginId
+            id = "foundation.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"
+        }
+        register("androidComposeBase") {
+            id = libs.plugins.foundation.android.compose.base.get().pluginId
+            implementationClass = "AndroidComposeBaseConventionPlugin"
+        }
+        register("androidComposeUi") {
+            id = libs.plugins.foundation.android.compose.ui.get().pluginId
+            implementationClass = "AndroidComposeUiConventionPlugin"
         }
         register("androidHilt") {
             id = libs.plugins.foundation.android.hilt.get().pluginId
@@ -53,12 +61,40 @@ gradlePlugin {
             implementationClass = "AndroidRoomConventionPlugin"
         }
         register("androidFeature") {
-            id = libs.plugins.foundation.android.feature.get().pluginId
+            id = "foundation.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
+        register("androidFeatureBase") {
+            id = libs.plugins.foundation.android.feature.base.get().pluginId
+            implementationClass = "AndroidFeatureBaseConventionPlugin"
+        }
+        register("androidFeatureDomain") {
+            id = libs.plugins.foundation.android.feature.domain.get().pluginId
+            implementationClass = "AndroidFeatureDomainConventionPlugin"
+        }
+        register("androidFeatureUi") {
+            id = libs.plugins.foundation.android.feature.ui.get().pluginId
+            implementationClass = "AndroidFeatureUiConventionPlugin"
+        }
+        register("androidFeatureNavigation3") {
+            id = libs.plugins.foundation.android.feature.navigation3.get().pluginId
+            implementationClass = "AndroidFeatureNavigation3ConventionPlugin"
+        }
+        register("androidFeatureLifecycle") {
+            id = libs.plugins.foundation.android.feature.lifecycle.get().pluginId
+            implementationClass = "AndroidFeatureLifecycleConventionPlugin"
+        }
         register("kotlinSerialization") {
-            id = libs.plugins.foundation.kotlin.serialization.get().pluginId
+            id = "foundation.kotlin.serialization"
             implementationClass = "KotlinSerializationConventionPlugin"
+        }
+        register("kotlinSerializationPlugin") {
+            id = libs.plugins.foundation.kotlin.serialization.plugin.get().pluginId
+            implementationClass = "KotlinSerializationPluginConventionPlugin"
+        }
+        register("kotlinSerializationJson") {
+            id = libs.plugins.foundation.kotlin.serialization.json.get().pluginId
+            implementationClass = "KotlinSerializationJsonConventionPlugin"
         }
     }
 }
