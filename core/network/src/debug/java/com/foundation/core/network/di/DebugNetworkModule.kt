@@ -1,6 +1,5 @@
 package com.foundation.core.network.di
 
-import com.foundation.core.common.di.BaseUrl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,15 +16,9 @@ object DebugNetworkModule {
     @Provides
     @Singleton
     @IntoSet
-    fun provideHttpLoggingInterceptor(
-        @BaseUrl baseUrl: String,
-    ): Interceptor {
+    fun provideHttpLoggingInterceptor(): Interceptor {
         return HttpLoggingInterceptor().apply {
-            level = if (baseUrl.isNotEmpty()) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            }
+            level = HttpLoggingInterceptor.Level.BODY
         }
     }
 }

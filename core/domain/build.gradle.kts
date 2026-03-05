@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.foundation.android.library)
-    alias(libs.plugins.foundation.android.hilt)
 }
 
 android {
@@ -10,4 +9,6 @@ android {
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.javax.inject)
 }

@@ -1,11 +1,15 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 
-class AndroidComposeConventionPlugin : Plugin<Project> {
+class AndroidFeatureUiConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            // Backward-compatible aggregate plugin.
             pluginManager.apply("foundation.android.compose.ui")
+
+            dependencies {
+                add("implementation", project(":core:ui"))
+            }
         }
     }
 }

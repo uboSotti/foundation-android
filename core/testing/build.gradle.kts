@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.foundation.android.library)
-    alias(libs.plugins.foundation.android.hilt)
-    alias(libs.plugins.foundation.android.compose)
+    alias(libs.plugins.foundation.android.compose.base)
 }
 
 android {
@@ -11,6 +10,7 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:model"))
+    api(platform(libs.androidx.compose.bom))
 
     api(libs.junit)
     api(libs.androidx.test.junit)

@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.foundation.core.common.error.AppError
@@ -38,12 +39,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/** Example 화면의 진입점 Composable. */
+/**
+ * Example feature의 route Composable.
+ *
+ * ViewModel로부터 상태를 수집하고 side effect를 처리한 뒤,
+ * 순수 UI인 [ExampleScreen]에 데이터를 전달한다.
+ */
 @Composable
-fun ExampleScreen(
-    viewModel: ExampleViewModel,
+fun ExampleRoute(
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: ExampleViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -55,7 +61,7 @@ fun ExampleScreen(
         }
     }
 
-    ExampleContent(
+    ExampleScreen(
         uiState = uiState,
         onIntent = viewModel::onIntent,
         modifier = modifier,
@@ -63,13 +69,12 @@ fun ExampleScreen(
 }
 
 /**
- * 각 데이터 소스의 상태에 따라 독립적으로 렌더링하는 stateless Composable.
+ * Example 화면의 순수 UI Composable.
  *
- * [ExampleUiState.githubRepo]가 로딩/에러/성공을 각각 처리하고,
- * [ExampleUiState.lastLaunchedAt]는 데이터가 준비되면 독립적으로 표시된다.
+ * ViewModel 타입에 직접 의존하지 않고, 외부에서 주입된 상태와 이벤트 핸들러만 사용한다.
  */
 @Composable
-internal fun ExampleContent(
+fun ExampleScreen(
     uiState: ExampleUiState,
     onIntent: (ExampleIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -88,12 +93,12 @@ internal fun ExampleContent(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 마지막 실행 시각 — 데이터 도착 시 독립적으로 표시
+        // 마지막 실행 시각 - 데이터 도착 시 독립적으로 표시
         LastLaunchedText(result = uiState.lastLaunchedAt)
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // GitHub 레포 카드 — 독립적으로 로딩/에러/성공 처리
+        // GitHub 레포 카드 - 독립적으로 로딩/에러/성공 처리
         GithubRepoSection(
             result = uiState.githubRepo,
             onOpenUrl = { url -> onIntent(ExampleIntent.OpenUrl(url)) },
@@ -149,7 +154,7 @@ private fun GithubRepoCard(
 ) {
     ElevatedCard(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(20.dp)) {
-            // ── Owner 헤더: 아바타 + 이름 ──
+            // Owner 헤더: 아바타 + 이름
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
                     model = githubRepo.owner.avatarUrl,
@@ -177,7 +182,7 @@ private fun GithubRepoCard(
                 }
             }
 
-            // ── 설명 ──
+            // 설명
             val description = githubRepo.description
             if (description != null) {
                 Spacer(modifier = Modifier.height(14.dp))
@@ -194,7 +199,7 @@ private fun GithubRepoCard(
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Spacer(modifier = Modifier.height(14.dp))
 
-            // ── 통계 행 ──
+            // 통계 행
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -216,7 +221,7 @@ private fun GithubRepoCard(
                 }
             }
 
-            // ── 업데이트 일시 ──
+            // 업데이트 일시
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = stringResource(R.string.example_last_updated, githubRepo.updatedAt),
@@ -226,7 +231,7 @@ private fun GithubRepoCard(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            // ── 외부 링크 버튼 ──
+            // 외부 링크 버튼
             FilledTonalButton(
                 onClick = { onOpenUrl(githubRepo.htmlUrl) },
                 modifier = Modifier.fillMaxWidth(),

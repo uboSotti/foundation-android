@@ -1,22 +1,16 @@
 plugins {
     alias(libs.plugins.foundation.android.application)
     alias(libs.plugins.foundation.android.hilt)
-    alias(libs.plugins.foundation.android.compose)
+    alias(libs.plugins.foundation.android.compose.ui)
 }
 
 android {
     namespace = "com.foundation.android"
 
-    buildFeatures {
-        buildConfig = true
-    }
-
     defaultConfig {
         applicationId = "com.foundation.android"
         versionCode = 1
         versionName = "1.0"
-
-        buildConfigField("String", "BASE_URL", "\"https://api.example.com/\"")
     }
 
     packaging {
@@ -28,7 +22,7 @@ android {
 
 dependencies {
     // Feature modules
-    implementation(project(":feature:example"))
+    implementation(project(":feature:example:impl"))
 
     // Core modules
     implementation(project(":core:common"))
@@ -36,6 +30,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
+    implementation(project(":core:navigation"))
 
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
@@ -52,3 +47,4 @@ dependencies {
     // Misc
     implementation(libs.androidx.startup.runtime)
 }
+
