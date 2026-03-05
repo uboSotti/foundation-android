@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import com.foundation.feature.example.ExampleNavKey
 
 /**
  * [FoundationApp]의 앱 수준 상태를 관리하는 State Holder.
@@ -46,15 +45,21 @@ class FoundationAppState(
 /**
  * [FoundationAppState]를 생성하고 remember 한다.
  *
+ * @param initialBackStack 시작 화면 스택.
  * @param isFirstLaunch ViewModel에서 수신한 최초 실행 여부.
  */
 @Composable
 fun rememberFoundationAppState(
+    initialBackStack: List<Any>,
     isFirstLaunch: Boolean = false,
 ): FoundationAppState {
-    return remember(isFirstLaunch) {
+    val backStack = initialBackStack.ifEmpty {
+        listOf(Unit)
+    }
+
+    return remember(backStack, isFirstLaunch) {
         FoundationAppState(
-            backStack = listOf<Any>(ExampleNavKey).toMutableStateList(),
+            backStack = backStack.toMutableStateList(),
             isFirstLaunch = isFirstLaunch,
         )
     }

@@ -36,6 +36,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
+    implementation(project(":core:navigation"))
 
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)

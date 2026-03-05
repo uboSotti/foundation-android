@@ -7,6 +7,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:navigation"))
+
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
 
