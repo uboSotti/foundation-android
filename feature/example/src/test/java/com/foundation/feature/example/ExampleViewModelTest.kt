@@ -1,5 +1,6 @@
 package com.foundation.feature.example
 
+import com.foundation.core.common.error.AppError
 import com.foundation.core.common.result.Result
 import com.foundation.core.domain.usecase.GetGithubRepoUseCase
 import com.foundation.core.domain.usecase.GetLastLaunchedAtUseCase
@@ -76,13 +77,13 @@ class ExampleViewModelTest {
     @Test
     fun `GetGithubRepoUseCase가 Error여도 lastLaunchedAt는 독립적으로 Success가 된다`() = runTest {
         val viewModel = createViewModel(
-            repoResult = Result.Error(RuntimeException("Network error")),
+            repoResult = Result.Error(AppError.Network.Connection()),
         )
         advanceUntilIdle()
 
         val repo = viewModel.uiState.githubRepo
         assertTrue(repo is Result.Error)
-        assertEquals("Network error", (repo as Result.Error).exception.message)
+        assertTrue((repo as Result.Error).error is AppError.Network.Connection)
 
         // lastLaunchedAt는 독립적으로 Success
         assertTrue(viewModel.uiState.lastLaunchedAt is Result.Success)
@@ -91,13 +92,13 @@ class ExampleViewModelTest {
     @Test
     fun `GetLastLaunchedAtUseCase가 Error여도 githubRepo는 독립적으로 Success가 된다`() = runTest {
         val viewModel = createViewModel(
-            lastLaunchedResult = Result.Error(RuntimeException("DB error")),
+            lastLaunchedResult = Result.Error(AppError.Storage.DataStore()),
         )
         advanceUntilIdle()
 
         val lastLaunched = viewModel.uiState.lastLaunchedAt
         assertTrue(lastLaunched is Result.Error)
-        assertEquals("DB error", (lastLaunched as Result.Error).exception.message)
+        assertTrue((lastLaunched as Result.Error).error is AppError.Storage.DataStore)
 
         // githubRepo는 독립적으로 Success
         assertTrue(viewModel.uiState.githubRepo is Result.Success)

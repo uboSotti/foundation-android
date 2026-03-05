@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.foundation.core.common.error.AppError
 import com.foundation.core.common.result.Result
 import com.foundation.core.model.GithubRepo
 import com.foundation.core.ui.component.ErrorContent
@@ -111,8 +112,7 @@ private fun GithubRepoSection(
         is Result.Loading -> LoadingContent()
 
         is Result.Error -> ErrorContent(
-            message = result.exception.localizedMessage
-                ?: stringResource(R.string.example_unknown_error),
+            message = result.error.toUserMessage(),
             onRetry = onRetry,
         )
 
@@ -189,6 +189,16 @@ private fun GithubRepoCard(
             }
         }
     }
+}
+
+/** [AppError] 유형에 따라 사용자에게 보여줄 메시지를 반환한다. */
+@Composable
+private fun AppError.toUserMessage(): String = when (this) {
+    is AppError.Network.Connection -> stringResource(R.string.error_network_connection)
+    is AppError.Network.Http -> stringResource(R.string.error_network_http, code)
+    is AppError.Network.Serialization -> stringResource(R.string.error_network_serialization)
+    is AppError.Storage.DataStore -> stringResource(R.string.error_storage)
+    is AppError.Unknown -> stringResource(R.string.example_unknown_error)
 }
 
 private fun Long.toFormattedDateTime(): String =

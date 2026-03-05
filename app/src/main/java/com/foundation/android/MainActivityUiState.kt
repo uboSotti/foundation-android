@@ -1,5 +1,7 @@
 package com.foundation.android
 
+import com.foundation.core.common.error.AppError
+
 /**
  * [MainActivity]의 앱 수준 UI 상태.
  *
@@ -24,10 +26,10 @@ sealed interface MainActivityUiState {
     /**
      * 초기화 중 오류 발생.
      *
-     * @property exception 발생한 예외.
+     * @property error 발생한 에러.
      */
     data class Error(
-        val exception: Throwable,
+        val error: AppError,
     ) : MainActivityUiState
 }
 

@@ -59,8 +59,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     is MainActivityUiState.Error -> ErrorContent(
-                        message = state.exception.message
-                            ?: "앱 초기화에 실패했습니다.",
+                        message = getString(R.string.error_app_init),
                     )
                 }
             }
