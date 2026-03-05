@@ -8,10 +8,11 @@
     <string name="error_network_http">서버 오류가 발생했습니다. (코드: %d)</string>
     <string name="error_network_serialization">데이터를 처리하는 중 오류가 발생했습니다.</string>
     <string name="error_storage">로컬 데이터를 읽는 중 오류가 발생했습니다.</string>
-    <string name="example_owner">Owner: %s</string>
+    <string name="example_owner_handle">\@%s</string>
+    <string name="example_owner_avatar_description">%s 프로필 이미지</string>
     <string name="example_last_updated">최근 업데이트: %s</string>
-    <string name="example_stars">Stars: %d</string>
-    <string name="example_forks">Forks: %d</string>
-    <string name="example_language">Language: %s</string>
-    <string name="example_open_github_repo">GitHub repo열기</string>
+    <string name="example_stat_stars">Stars</string>
+    <string name="example_stat_forks">Forks</string>
+    <string name="example_stat_language">Language</string>
+    <string name="example_open_github_repo">GitHub에서 보기</string>
 </resources>
