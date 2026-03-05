@@ -1,6 +1,5 @@
 package com.foundation.feature.example
 
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavEntry
 import com.foundation.core.navigation.FeatureEntry
 import javax.inject.Inject
@@ -19,11 +18,7 @@ class ExampleFeatureEntry @Inject constructor() : FeatureEntry {
         val navKey = key as? ExampleNavKey ?: return null
 
         return NavEntry(navKey) {
-            val viewModel: ExampleViewModel = hiltViewModel()
-            ExampleScreen(
-                viewModel = viewModel,
-                onOpenUrl = onOpenUrl,
-            )
+            ExampleRoute(onOpenUrl = onOpenUrl)
         }
     }
 }
