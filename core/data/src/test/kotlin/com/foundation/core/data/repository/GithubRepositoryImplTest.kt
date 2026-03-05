@@ -1,13 +1,21 @@
 package com.foundation.core.data.repository
 
+import com.foundation.core.common.error.AppError
+import com.foundation.core.common.error.AppException
 import com.foundation.core.network.api.GithubApiService
 import com.foundation.core.network.model.GithubOwnerResponse
 import com.foundation.core.network.model.GithubRepoResponse
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.SerializationException
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
+import java.io.IOException
 
 class GithubRepositoryImplTest {
 
@@ -34,7 +42,7 @@ class GithubRepositoryImplTest {
         val repository = GithubRepositoryImpl(apiService)
 
         val repo = repository.getRepositoryInfo("uboSotti", "foundation-android")
-        
+
         assertEquals("uboSotti/foundation-android", repo.fullName)
         assertEquals("https://github.com/uboSotti/foundation-android", repo.htmlUrl)
         assertEquals(10, repo.stargazersCount)
@@ -42,13 +50,69 @@ class GithubRepositoryImplTest {
         assertEquals("Kotlin", repo.language)
     }
 
-    @Test(expected = RuntimeException::class)
-    fun `API 호출 실패 시 예외가 전파된다`() = runTest {
+    @Test
+    fun `IOException 발생 시 Network Connection 에러로 매핑된다`() = runTest {
         val apiService = mockk<GithubApiService>()
-        coEvery { apiService.getRepositoryInfo(any(), any()) } throws RuntimeException("API error")
+        coEvery { apiService.getRepositoryInfo(any(), any()) } throws IOException("timeout")
 
         val repository = GithubRepositoryImpl(apiService)
 
-        repository.getRepositoryInfo("uboSotti", "foundation-android")
+        try {
+            repository.getRepositoryInfo("uboSotti", "foundation-android")
+            throw AssertionError("Expected AppException")
+        } catch (e: AppException) {
+            assertTrue(e.error is AppError.Network.Connection)
+        }
+    }
+
+    @Test
+    fun `HttpException 발생 시 Network Http 에러로 매핑된다`() = runTest {
+        val apiService = mockk<GithubApiService>()
+        coEvery {
+            apiService.getRepositoryInfo(any(), any())
+        } throws HttpException(Response.error<Any>(404, "".toResponseBody()))
+
+        val repository = GithubRepositoryImpl(apiService)
+
+        try {
+            repository.getRepositoryInfo("uboSotti", "foundation-android")
+            throw AssertionError("Expected AppException")
+        } catch (e: AppException) {
+            val error = e.error
+            assertTrue(error is AppError.Network.Http)
+            assertEquals(404, (error as AppError.Network.Http).code)
+        }
+    }
+
+    @Test
+    fun `SerializationException 발생 시 Network Serialization 에러로 매핑된다`() = runTest {
+        val apiService = mockk<GithubApiService>()
+        coEvery {
+            apiService.getRepositoryInfo(any(), any())
+        } throws SerializationException("parse error")
+
+        val repository = GithubRepositoryImpl(apiService)
+
+        try {
+            repository.getRepositoryInfo("uboSotti", "foundation-android")
+            throw AssertionError("Expected AppException")
+        } catch (e: AppException) {
+            assertTrue(e.error is AppError.Network.Serialization)
+        }
+    }
+
+    @Test
+    fun `분류할 수 없는 예외는 safeApiCall을 통과하여 그대로 전파된다`() = runTest {
+        val apiService = mockk<GithubApiService>()
+        coEvery { apiService.getRepositoryInfo(any(), any()) } throws RuntimeException("unexpected")
+
+        val repository = GithubRepositoryImpl(apiService)
+
+        try {
+            repository.getRepositoryInfo("uboSotti", "foundation-android")
+            throw AssertionError("Expected RuntimeException")
+        } catch (e: RuntimeException) {
+            assertEquals("unexpected", e.message)
+        }
     }
 }

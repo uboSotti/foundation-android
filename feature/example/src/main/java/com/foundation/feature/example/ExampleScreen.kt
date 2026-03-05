@@ -15,10 +15,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.foundation.core.common.error.AppError
 import com.foundation.core.common.result.Result
 import com.foundation.core.model.GithubRepo
 import com.foundation.core.ui.component.ErrorContent
@@ -34,10 +38,19 @@ fun ExampleScreen(
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is ExampleSideEffect.OpenBrowser -> onOpenUrl(effect.url)
+            }
+        }
+    }
+
     ExampleContent(
-        uiState = viewModel.uiState,
-        onOpenUrl = onOpenUrl,
-        onRetry = viewModel::refresh,
+        uiState = uiState,
+        onIntent = viewModel::onIntent,
         modifier = modifier,
     )
 }
@@ -51,8 +64,7 @@ fun ExampleScreen(
 @Composable
 internal fun ExampleContent(
     uiState: ExampleUiState,
-    onOpenUrl: (String) -> Unit,
-    onRetry: () -> Unit,
+    onIntent: (ExampleIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -77,8 +89,8 @@ internal fun ExampleContent(
         // GitHub 레포 카드 — 독립적으로 로딩/에러/성공 처리
         GithubRepoSection(
             result = uiState.githubRepo,
-            onOpenUrl = onOpenUrl,
-            onRetry = onRetry,
+            onOpenUrl = { url -> onIntent(ExampleIntent.OpenUrl(url)) },
+            onRetry = { onIntent(ExampleIntent.Refresh) },
         )
     }
 }
@@ -111,8 +123,7 @@ private fun GithubRepoSection(
         is Result.Loading -> LoadingContent()
 
         is Result.Error -> ErrorContent(
-            message = result.exception.localizedMessage
-                ?: stringResource(R.string.example_unknown_error),
+            message = result.error.toUserMessage(),
             onRetry = onRetry,
         )
 
@@ -189,6 +200,16 @@ private fun GithubRepoCard(
             }
         }
     }
+}
+
+/** [AppError] 유형에 따라 사용자에게 보여줄 메시지를 반환한다. */
+@Composable
+private fun AppError.toUserMessage(): String = when (this) {
+    is AppError.Network.Connection -> stringResource(R.string.error_network_connection)
+    is AppError.Network.Http -> stringResource(R.string.error_network_http, code)
+    is AppError.Network.Serialization -> stringResource(R.string.error_network_serialization)
+    is AppError.Storage.DataStore -> stringResource(R.string.error_storage)
+    is AppError.Unknown -> stringResource(R.string.example_unknown_error)
 }
 
 private fun Long.toFormattedDateTime(): String =

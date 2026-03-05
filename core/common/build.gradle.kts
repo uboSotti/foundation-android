@@ -10,4 +10,8 @@ android {
 dependencies {
     implementation(libs.kotlinx.coroutines.android)
     api(libs.timber)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

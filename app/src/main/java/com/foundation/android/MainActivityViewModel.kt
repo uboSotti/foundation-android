@@ -44,7 +44,7 @@ class MainActivityViewModel @Inject constructor(
                 is Result.Success -> MainActivityUiState.Ready(
                     isFirstLaunch = result.data == null,
                 )
-                is Result.Error -> MainActivityUiState.Error(result.exception)
+                is Result.Error -> MainActivityUiState.Error(result.error)
             }
         }
         .transformWhile { state ->
