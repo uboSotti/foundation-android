@@ -9,5 +9,5 @@
     <string name="example_stars">Stars: %d</string>
     <string name="example_forks">Forks: %d</string>
     <string name="example_language">Language: %s</string>
-    <string name="example_open_github_repo">Github repo열기</string>
+    <string name="example_open_github_repo">GitHub repo열기</string>
 </resources>

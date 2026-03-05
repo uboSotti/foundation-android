@@ -1,6 +1,5 @@
 package com.foundation.core.data.repository
 
-import app.cash.turbine.test
 import com.foundation.core.network.api.GithubApiService
 import com.foundation.core.network.model.GithubOwnerResponse
 import com.foundation.core.network.model.GithubRepoResponse
@@ -34,7 +33,7 @@ class GithubRepositoryImplTest {
 
         val repository = GithubRepositoryImpl(apiService)
 
-        val repo = repository.getRepositoryInfo()
+        val repo = repository.getRepositoryInfo("uboSotti", "foundation-android")
         
         assertEquals("uboSotti/foundation-android", repo.fullName)
         assertEquals("https://github.com/uboSotti/foundation-android", repo.htmlUrl)
@@ -50,6 +49,6 @@ class GithubRepositoryImplTest {
 
         val repository = GithubRepositoryImpl(apiService)
 
-        repository.getRepositoryInfo()
+        repository.getRepositoryInfo("uboSotti", "foundation-android")
     }
 }
