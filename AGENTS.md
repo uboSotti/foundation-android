@@ -1,66 +1,73 @@
 # AGENTS.md
 
-> **Notice**: This file is the **Official Protocol** for Autonomous AI Agents working on the `foundation-android` project.
-> You must operate via **CLI commands**, adhere to **Android Best Practices**, and ensure **build stability** via self-correction.
+Official protocol for AI/code agents in `foundation-android`.
 
-## 1. Project Context & Environment
-* **Project Name**: foundation-android
-* **Architecture**: Modularized Clean Architecture (Multi-module)
-* **Build System**: Gradle Kotlin DSL + Version Catalog (`libs.versions.toml`)
-* **UI Framework**: Jetpack Compose (Material3)
-* **Target Environment**: Root Directory `./`, JDK 17+
+## Scope
+- `AGENTS.md` defines execution behavior for agents.
+- Architecture/context explanations belong in `README.md`; do not duplicate long narrative here.
 
-## 2. Strategic Mission Analysis (Recommended Internal Protocol)
-To ensure high-quality output, agents are encouraged to perform internal reasoning (Chain-of-Thought) before modification. If the runtime supports it, a summary of this analysis is preferred.
+## 1) Mission
+- Preserve architecture integrity.
+- Follow Android official layer guidance (UI / Domain / Data) and Navigation 3 guidance.
+- Keep the project always buildable.
 
-1.  **`<analysis>`**: Assess the request against the current module structure and dependencies.
-2.  **`<plan>`**: Map out the files to be changed and the sequence of Gradle tasks required.
-3.  **`<verification>`**: Self-evaluate the plan against the **Layering Principles** and **UDF** requirements.
+## 2) Mandatory Workflow
+1. Analyze impact before edits.
+2. Edit with clear module/layer boundaries.
+3. If build scripts or dependencies changed: run `./gradlew --refresh-dependencies`.
+4. Always run:
+   - `./gradlew assembleDebug`
+   - `./gradlew testDebugUnitTest`
+5. If failure occurs, self-correct until green.
 
-## 3. Autonomous Execution & Verification Loop
-Agents must take full responsibility for the integrity of the codebase:
+## 3) Architecture Rules
+### Layering
+- `:feature:*` must not depend on another `:feature:*`.
+- `:core:domain` must not depend on `:core:data` or network implementation.
+- `:core:data` is the entry point to data sources; other layers access data via repositories/use cases.
 
-1.  **Plan & Edit**: Modify code according to the internal analysis.
-2.  **Sync & Build**: If dependencies or build scripts change, run `./gradlew --refresh-dependencies`. Always run `./gradlew assembleDebug` after changes.
-3.  **Test Verification**: Execute `./gradlew testDebugUnitTest` to ensure no regression in business logic.
-4.  **Self-Correction**: If any CLI error occurs, analyze the logs and apply fixes autonomously until the build is green.
+### UI Layer
+- Use MVI + UDF.
+- `UiState` is immutable (`data class`).
+- Composables are stateless/pure UI where possible.
+- `Route` collects state/effects, `Screen` renders UI.
+- Use `collectAsStateWithLifecycle()`.
 
-## 4. Architecture & Coding Standards
+### Domain Layer
+- Optional layer; add use cases when complexity/reuse justifies it.
+- Use case naming: `VerbNounUseCase`.
+- Prefer `operator fun invoke()`.
 
-### Module Structure & Layering (Wildcard Pattern)
-* **`:app`**: Root entry point (DI, Navigation Host).
-* **`:feature:*`**: Independent functional modules (Screens, ViewModels).
-* **`:core:*`**: Shared capabilities (Domain, Data, UI, Network, Database, Common).
+### Data Layer
+- Repositories are data entry points.
+- Data sources are not used directly by UI layer.
+- Keep mapping and conflict resolution inside repository/data layer.
 
-**Layering Principles (Strict Rules)**:
-* **Unidirectional**: `:feature:*` → `:core:domain`, `:core:ui`.
-* **Data Flow**: `:core:data` → `:core:domain` (via Interface).
-* **Horizontal Isolation**: A `:feature:*` module **MUST NOT** depend on another `:feature:*` module.
+## 4) Navigation 3 + Modularization Rules
+- Follow feature split: `feature/<name>/api` + `feature/<name>/impl`.
+- `api` contains `NavKey`.
+- `impl` contains entries/content and DI bindings.
+- Keys implement `androidx.navigation3.runtime.NavKey` and should be serializable.
+- App builds `entryProvider` from DI-contributed entry builders.
+- Unknown/missing navigation configuration should fail fast, not silently ignored.
 
-### Development Principles
-1.  **ViewModel-Centric Logic**:
-    * **ALL** business logic **MUST** be placed in the **ViewModel**.
-    * Composables must remain "stateless" or purely driven by the UI state provided by the ViewModel.
-2.  **Official Android Recommendations**:
-    * **UDF (Unidirectional Data Flow)**: Follow the state-down, events-up pattern strictly.
-    * **Lifecycle Awareness**: Use `collectAsStateWithLifecycle()` for all UI state collections in Compose.
-3.  **Dependency Management**:
-    * **MUST** use `gradle/libs.versions.toml`. Hardcoded versions in `build.gradle.kts` are prohibited.
-    * Always search for the **latest stable version** for any new library addition.
+## 5) Dependency and Build Rules
+- No hardcoded library versions in module build scripts.
+- Use `libs.versions.toml` and convention plugins.
+- Prefer adding shared module constraints in `build-logic` when rule should be global.
 
-## 5. Operational Standards
+## 6) Coding and Change Policy
+- Keep changes minimal but complete.
+- Preserve existing behavior unless change is intentional and verified.
+- Do not leave architecture in intermediate broken state.
+- Include concise rationale when introducing new abstractions.
 
-### Git & Commits
-* **Standard**: Follow **Conventional Commits 1.0.0**.
-* **Format**: `type(scope): description` (Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`).
+## 7) Commit Convention
+- Conventional Commits: `type(scope): description`
+- Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `style`
 
-### File Handling
-* Provide code changes in clear blocks or `diff` format.
-* Do not restate unchanged code unless necessary for context.
+## 8) Communication
+- Korean for discussion; keep technical terms in English.
+- Be concise, objective, and evidence-based.
 
-## 6. Communication
-* **Language**: Korean (Technical terms in English).
-* **Tone**: Professional, Concise, and Objective.
-
----
-**End of Protocol**
+End of protocol.

@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:navigation"))
+    implementation(project(":feature:example:api"))
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)

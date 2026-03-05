@@ -22,7 +22,7 @@ android {
 
 dependencies {
     // Feature modules
-    implementation(project(":feature:example"))
+    implementation(project(":feature:example:impl"))
 
     // Core modules
     implementation(project(":core:common"))
@@ -47,3 +47,4 @@ dependencies {
     // Misc
     implementation(libs.androidx.startup.runtime)
 }
+
