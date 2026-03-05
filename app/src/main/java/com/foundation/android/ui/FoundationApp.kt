@@ -17,47 +17,29 @@ import com.foundation.feature.example.exampleEntry
  * ViewModel에 대한 의존 없이 순수한 앱 UI 컴포넌트로 동작한다.
  *
  * @param appState 앱 수준 상태 홀더. [MainActivity]에서 생성하여 전달한다.
+ * @param onOpenUrl 외부 URL 열기 요청 시 호출되는 콜백. Activity에서 Intent 처리를 담당한다.
  */
 @Composable
 fun FoundationApp(
     appState: FoundationAppState,
-) {
-    FoundationScaffold(appState = appState)
-}
-
-/**
- * Scaffold와 NavHost를 구성하는 내부 Composable.
- *
- * @param appState 앱 수준 상태 홀더.
- */
-@Composable
-private fun FoundationScaffold(
-    appState: FoundationAppState,
+    onOpenUrl: (String) -> Unit,
 ) {
     Scaffold { innerPadding ->
-        FoundationDisplay(
-            appState = appState,
+        NavDisplay(
+            backStack = appState.backStack,
             modifier = Modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
+            onBack = appState::onBack,
+            entryProvider = { key ->
+                when (key) {
+                    is ExampleNavKey -> exampleEntry(
+                        key = key,
+                        onOpenUrl = onOpenUrl,
+                    )
+                    else -> NavEntry(Unit) { }
+                }
+            },
         )
     }
-}
-
-@Composable
-private fun FoundationDisplay(
-    appState: FoundationAppState,
-    modifier: Modifier = Modifier,
-) {
-    NavDisplay(
-        backStack = appState.backStack,
-        modifier = modifier,
-        onBack = { appState.onBack() },
-        entryProvider = { key ->
-            when (key) {
-                is ExampleNavKey -> exampleEntry(key)
-                else -> NavEntry(Unit) { }
-            }
-        },
-    )
 }

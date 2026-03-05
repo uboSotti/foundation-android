@@ -2,91 +2,195 @@ package com.foundation.feature.example
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.foundation.core.common.result.Result
+import com.foundation.core.model.GithubRepo
 import com.foundation.core.ui.component.ErrorContent
 import com.foundation.core.ui.component.LoadingContent
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-/** Example 화면의 진입점 Composable. ViewModel로부터 상태를 수집하여 [ExampleContent]에 전달한다. */
+/** Example 화면의 진입점 Composable. */
 @Composable
 fun ExampleScreen(
     viewModel: ExampleViewModel,
+    onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    ExampleContent(uiState = uiState, modifier = modifier)
+    ExampleContent(
+        uiState = viewModel.uiState,
+        onOpenUrl = onOpenUrl,
+        onRetry = viewModel::refresh,
+        modifier = modifier,
+    )
 }
 
 /**
- * UI 상태에 따라 적절한 화면을 렌더링하는 stateless Composable.
+ * 각 데이터 소스의 상태에 따라 독립적으로 렌더링하는 stateless Composable.
  *
- * - [ExampleUiState.Loading]: 공통 로딩 컴포넌트 표시
- * - [ExampleUiState.Success]: 마지막 실행 시각 정보 표시
- * - [ExampleUiState.Error]: 공통 에러 컴포넌트 표시
+ * [ExampleUiState.githubRepo]가 로딩/에러/성공을 각각 처리하고,
+ * [ExampleUiState.lastLaunchedAt]는 데이터가 준비되면 독립적으로 표시된다.
  */
 @Composable
 internal fun ExampleContent(
     uiState: ExampleUiState,
-    modifier: Modifier = Modifier,
-) {
-    when (uiState) {
-        is ExampleUiState.Loading -> LoadingContent(modifier = modifier)
-
-        is ExampleUiState.Success -> ExampleSuccessContent(
-            lastLaunchedAt = uiState.lastLaunchedAt,
-            modifier = modifier,
-        )
-
-        is ExampleUiState.Error -> ErrorContent(
-            message = uiState.message,
-            modifier = modifier,
-        )
-    }
-}
-
-/**
- * 마지막 실행 시각 정보를 표시하는 Composable.
- *
- * 재사용 가능한 단위로 분리되어 있으며, [ExampleContent]에서만 호출된다.
- *
- * @param lastLaunchedAt 포맷된 마지막 실행 시각 문자열. null이면 최초 실행으로 간주한다.
- * @param modifier 외부에서 전달받는 Modifier.
- */
-@Composable
-private fun ExampleSuccessContent(
-    lastLaunchedAt: String?,
+    onOpenUrl: (String) -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "여기에 새로운 앱을 시작하세요",
+            text = stringResource(R.string.example_title),
             style = MaterialTheme.typography.headlineSmall,
         )
         Spacer(modifier = Modifier.height(12.dp))
+
+        // 마지막 실행 시각 — 데이터 도착 시 독립적으로 표시
+        LastLaunchedText(result = uiState.lastLaunchedAt)
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // GitHub 레포 카드 — 독립적으로 로딩/에러/성공 처리
+        GithubRepoSection(
+            result = uiState.githubRepo,
+            onOpenUrl = onOpenUrl,
+            onRetry = onRetry,
+        )
+    }
+}
+
+/** 마지막 실행 시각을 표시한다. 로딩/에러 상태에서는 렌더링하지 않는다. */
+@Composable
+private fun LastLaunchedText(result: Result<Long?>) {
+    if (result is Result.Success) {
+        val lastLaunchedAt = result.data
         Text(
             text = if (lastLaunchedAt != null) {
-                "마지막 실행: $lastLaunchedAt"
+                stringResource(R.string.example_last_launched_at, lastLaunchedAt.toFormattedDateTime())
             } else {
-                "마지막 실행 기록 없음"
+                stringResource(R.string.example_last_launched_none)
             },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
+
+/** GitHub 레포 정보를 상태에 따라 로딩/에러/카드로 렌더링한다. */
+@Composable
+private fun GithubRepoSection(
+    result: Result<GithubRepo>,
+    onOpenUrl: (String) -> Unit,
+    onRetry: () -> Unit,
+) {
+    when (result) {
+        is Result.Loading -> LoadingContent()
+
+        is Result.Error -> ErrorContent(
+            message = result.exception.localizedMessage
+                ?: stringResource(R.string.example_unknown_error),
+            onRetry = onRetry,
+        )
+
+        is Result.Success -> GithubRepoCard(
+            githubRepo = result.data,
+            onOpenUrl = onOpenUrl,
+        )
+    }
+}
+
+@Composable
+private fun GithubRepoCard(
+    githubRepo: GithubRepo,
+    onOpenUrl: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            // 레포 헤더
+            Text(
+                text = githubRepo.fullName,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            val description = githubRepo.description
+            if (description != null) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // 소유자 · 통계
+            Text(
+                text = stringResource(R.string.example_owner, githubRepo.owner.login),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = stringResource(R.string.example_last_updated, githubRepo.updatedAt),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(
+                    text = stringResource(R.string.example_stars, githubRepo.stargazersCount),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Text(
+                    text = stringResource(R.string.example_forks, githubRepo.forksCount),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            val language = githubRepo.language
+            if (language != null) {
+                Text(
+                    text = stringResource(R.string.example_language, language),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 외부 링크 버튼
+            Button(
+                onClick = { onOpenUrl(githubRepo.htmlUrl) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(text = stringResource(R.string.example_open_github_repo))
+            }
+        }
+    }
+}
+
+private fun Long.toFormattedDateTime(): String =
+    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        .format(Date(this))

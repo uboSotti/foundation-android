@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "com.foundation.feature.example"
 }
+
+dependencies {
+    testImplementation(project(":core:testing"))
+}
