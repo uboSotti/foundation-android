@@ -304,6 +304,36 @@ android {
 
 Add `include(":core:newmodule")` to `settings.gradle.kts`.
 
+## Gradle Wrapper Management
+
+To ensure build consistency across all environments (including Windows, macOS, and Linux), the
+Gradle Wrapper in `build-logic/` is automatically synchronized with the root wrapper whenever the
+version is updated.
+
+### Initial Setup & Updates
+
+When cloning for the first time or updating the Gradle version, you **must** run the following
+command to unify the environments:
+
+```bash
+./gradlew wrapper --no-configuration-cache
+```
+
+> [!NOTE]
+> The `--no-configuration-cache` flag is required because the `wrapper` task is currently
+> incompatible with Gradle's Configuration Cache due to custom synchronization logic.
+
+### Updating Gradle Version
+
+To upgrade the project's Gradle version, run:
+
+```bash
+./gradlew wrapper --gradle-version <new-version> --no-configuration-cache
+```
+
+This command will update the root wrapper and automatically copy the necessary properties and JAR
+files to the `build-logic/gradle/wrapper` directory.
+
 ## Project Conventions
 
 - **UiState**: Sealed interfaces per screen, with at minimum `Loading` and `Success` states

@@ -13,3 +13,14 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.room) apply false
 }
+
+tasks.named<Wrapper>("wrapper") {
+    doLast {
+        val targetDir = file("build-logic/gradle/wrapper")
+        copy {
+            from(file("gradle/wrapper"))
+            into(targetDir)
+        }
+    }
+}
+
